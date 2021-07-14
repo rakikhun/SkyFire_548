@@ -3232,3 +3232,43 @@ Skip.Worgen.Start.Level = 18
 
 #
 ###################################################################################################
+
+###################################################################################################
+#Skip Panda Starting Area#
+#################################
+#
+#    Skip Panda Starting Area
+#        Enable this if you want to skip the Panda starting area
+#
+#
+#    Skip.Panda.Starter.Announce.enable
+#         Description: Announces Module when player logs in.
+#         Default:    0 - (Disabled)
+#                     1 - (Enabled)
+
+Skip.Pandaren.Starter.Announce.enable = 1
+
+#    Skip.Panda.Starter.Enable
+#         Active Module for all new accounts regardless of account level.
+#         Default:    0 - (Disabled)
+#                     1 - (Enabled)
+
+Skip.Pandaren.Starter.Enable = 1
+
+#    GM.Skip.Panda.Starter.Enable
+#         Active Module for all new accounts of a GM account level ONLY.
+#         Ensure you have Skip.Panda.Starter.Enable set to 0 if using this conf.
+#         Default:    0 - (Disabled)
+#                     1 - (Enabled)
+
+GM.Skip.Pandaren.Starter.Enable = 0
+
+#    Skip.Panda.Start.Level
+#         Adjusted Panda Start Level if module is used.
+#         Default:    18 - (Default)
+#
+
+Skip.pandaren.Start.Level = 12
+
+#
+###################################################################################################

@@ -18,6 +18,67 @@
 #include "World.h"
 #include "WorldSession.h"
 
+struct PlayerItemsEntry
+{
+    PlayerItemsEntry() :
+        shoulders(0), chest(0), trinkett(0), weapon(0), weapon2(0), weapon3(0), shield(0),
+        shoulders2(0), chest2(0), trinkett2(0), bag(0)
+    {
+    }
+
+    uint32 shoulders;
+    uint32 chest;
+    uint32 trinkett;
+    uint32 weapon;
+    uint32 weapon2;
+    uint32 weapon3;
+    uint32 shield;
+    uint32 shoulders2;
+    uint32 chest2;
+    uint32 trinkett2;
+    uint32 bag;
+};
+
+struct ItemCount
+{
+    ItemCount() :
+        shoulderCount(0), chestCount(0), trinkettCount(0), weaponCount(0), weapon2Count(0), weapon3Count(0), shieldCount(0),
+        shoulders2Count(0), chest2Count(0), trinkett2Count(0), bagCount(0)
+    {
+    
+    }
+    uint32 shoulderCount;
+    uint32 chestCount;
+    uint32 trinkettCount;
+    uint32 weaponCount;
+    uint32 weapon2Count;
+    uint32 weapon3Count;
+    uint32 shieldCount;
+    uint32 shoulders2Count;
+    uint32 chest2Count;
+    uint32 trinkett2Count;
+    uint32 bagCount;
+};
+
+void AddItem(Player* player, PlayerItemsEntry items, ItemCount count)
+{
+    player->AddItem(items.shoulders, count.shoulderCount);
+    player->AddItem(items.chest, count.chestCount);
+    player->AddItem(items.trinkett, count.trinkettCount);
+    player->AddItem(items.weapon, count.weaponCount);
+    player->AddItem(items.weapon2, count.weapon2Count);
+    player->AddItem(items.weapon3, count.weapon3Count);
+    player->AddItem(items.shield, count.shieldCount);
+    player->AddItem(items.shoulders2, count.shoulders2Count);
+    player->AddItem(items.chest2, count.chest2Count);
+    player->AddItem(items.trinkett2, count.trinkett2Count);
+
+    // don't want to add 0 or negative bag count
+    if (count.bagCount > 0)
+        for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; i++)
+            player->EquipNewItem(i, items.bag, true);
+}
+
 class SPP_skip_deathknight_announce : public PlayerScript
 {
 public:
@@ -272,6 +333,279 @@ public:
     }
 };
 
+class SPP_skip_pandaren : public PlayerScript
+{
+public:
+    SPP_skip_pandaren() : PlayerScript("spp_skip_pandaren") { }
+
+    void OnLogin(Player* player, bool firstLogin) override
+    {
+        int PL = sConfigMgr->GetFloatDefault("Skip.pandaren.Start.Level", 12);
+
+        if (sConfigMgr->GetBoolDefault("Skip.Pandaren.Starter.Enable", true))
+        {
+            if (player->GetAreaId() == 5834)
+            {
+                if (!firstLogin)
+                    return;
+
+                player->SetLevel(PL);
+                player->ShowNeutralPlayerFactionSelectUI();
+
+                PlayerClass(player);
+
+                ObjectAccessor::SaveAllPlayers(); //Save
+            }
+        }
+        
+        if (sConfigMgr->GetBoolDefault("GM.Skip.Pandaren.Starter.Enable", true))
+        {
+            if (player->GetAreaId() == 5834)
+            {
+                if (!firstLogin)
+                    return;
+
+                player->SetLevel(PL);
+                player->ShowNeutralPlayerFactionSelectUI();
+
+                PlayerClass(player);
+
+                ObjectAccessor::SaveAllPlayers(); //Save
+            }
+        }
+    }
+
+    void PlayerClass(Player* player)
+    {
+        PlayerItemsEntry items;
+        ItemCount count;
+
+        items.bag = 41600;
+        count.bagCount = 4;
+        switch (player->getClass())
+        {
+            case CLASS_WARRIOR:
+                //Warrior
+                // items
+                items.shoulders = 93893;
+                items.chest = 93892;
+                items.trinkett = 42991;
+                items.weapon = 69893;
+                items.shield = 93902;
+                items.shoulders2 = 42949;
+                items.chest2 = 48685;
+                items.weapon2 = 42943;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.shieldCount = 1;
+                count.shoulders2Count = 1;
+                count.chest2Count = 1;
+                count.weapon2Count = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_PALADIN:
+                //Paladin
+                // items
+                items.shoulders = 69890;
+                items.chest = 69889;
+                items.trinkett = 42991;
+                items.weapon = 69893;
+                items.shield = 93902;
+                items.shoulders2 = 42951;
+                items.chest2 = 48683;
+                items.trinkett2 = 42992;
+                items.weapon2 = 42948;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.shieldCount = 1;
+                count.shoulders2Count = 1;
+                count.chest2Count = 1;
+                count.trinkett2Count = 2;
+                count.weapon2Count = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_HUNTER:
+                //Hunter
+                // items
+                items.shoulders = 42950;
+                items.chest = 48677;
+                items.trinkett = 42991;
+                items.weapon = 42943;
+                items.weapon2 = 42946;
+                items.weapon3 = 44093;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.weapon2Count = 1;
+                count.weapon3Count = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_ROGUE:
+                //Rogue
+                // items
+                items.shoulders = 42952;
+                items.chest = 48689;
+                items.trinkett = 42991;
+                items.weapon = 42944;
+                items.weapon2 = 42944;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.weapon2Count = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_PRIEST:
+                //Priest
+                // items
+                items.shoulders = 42985;
+                items.chest = 48691;
+                items.trinkett = 42992;
+                items.weapon = 42947;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_DEATH_KNIGHT:
+                //Death Knight
+                // items
+                items.shoulders = 42949;
+                items.chest = 48685;
+                items.trinkett = 42991;
+                items.weapon = 42945;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_SHAMAN:
+                //Shaman
+                // items
+                items.shoulders = 44102;
+                items.chest = 48683;
+                items.trinkett = 42992;
+                items.weapon = 44064;
+                items.shield = 93903;
+                items.shoulders2 = 44101;
+                items.chest2 = 48677;
+                items.weapon2 = 48716;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.shieldCount = 1;
+                count.shoulders2Count = 1;
+                count.chest2Count = 1;
+                count.weapon2Count = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_MAGE:
+                //Mage
+                // items
+                items.shoulders = 42985;
+                items.chest = 48691;
+                items.trinkett = 42992;
+                items.weapon = 42947;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_WARLOCK:
+                //Warlock
+                // items
+                items.shoulders = 42985;
+                items.chest = 48691;
+                items.trinkett = 42992;
+                items.weapon = 42947;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_DRUID:
+                //Druid
+                // items
+                items.shoulders = 42984;
+                items.chest = 48687;
+                items.trinkett = 42992;
+                items.weapon = 42948;
+                items.shoulders2 = 42952;
+                items.chest2 = 48689;
+                items.trinkett2 = 42991;
+                items.weapon2 = 48718;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.shoulders2Count = 1;
+                count.chest2Count = 1;
+                count.trinkett2Count = 2;
+                count.weapon2Count = 1;
+                AddItem(player, items, count);
+                break;
+            case CLASS_MONK:
+                //Monk
+                // items
+                items.shoulders = 42984;
+                items.chest = 48687;
+                items.trinkett = 42992;
+                items.weapon = 42947;
+                items.shoulders2 = 42952;
+                items.chest2 = 48689;
+                items.trinkett2 = 42991;
+                items.weapon2 = 48716;
+                // item count
+                count.shoulderCount = 1;
+                count.chestCount = 1;
+                count.trinkettCount = 2;
+                count.weaponCount = 1;
+                count.shoulders2Count = 1;
+                count.chest2Count = 1;
+                count.trinkett2Count = 2;
+                count.weapon2Count = 1;
+                AddItem(player, items, count);
+                break;
+            default:
+                break;
+        }
+    }
+};
+
+class SPP_skip_pandaren_announce : public PlayerScript
+{
+public:
+    SPP_skip_pandaren_announce() : PlayerScript("SPP_skip_pandaren_announce") { }
+
+    void OnLogin(Player* player, bool /*firstLogin*/) override
+    {
+        if (sConfigMgr->GetBoolDefault("Skip.Pandaren.Starter.Announce.enable", true))
+        {
+            ChatHandler(player->GetSession()).SendSysMessage("This server is running the |cff4CFF00SPP Skip Pandaren Starter |rmodule.");
+        }
+    }
+};
+
 void AddSC_skip_StarterArea()
 {
     new SPP_skip_deathknight_announce;
@@ -280,4 +614,5 @@ void AddSC_skip_StarterArea()
     new SPP_skip_goblin_announce;
     new SPP_skip_worgen_announce;
     new spp_skip_worgen;
+    new SPP_skip_pandaren;
 }
