@@ -615,4 +615,5 @@ void AddSC_skip_StarterArea()
     new SPP_skip_worgen_announce;
     new spp_skip_worgen;
     new SPP_skip_pandaren;
+    new SPP_skip_pandaren_announce;
 }
